@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro-Fit Clinical Medical Diet Maker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #e4e7ec; color: #1e293b; }
+        .skeu-card {
+            background: #cbdaf6;
+            box-shadow: 10px 10px 20px #cbcfd5, -10px -10px 20px #ffffff;
+            border-radius: 20px;
+        }
+        .skeu-inset {
+            background: #f0f3f8;
+            box-shadow: inset 4px 4px 8px #cbcfd5, inset -4px -4px 8px #ffffff;
+            border-radius: 12px;
+        }
+        .skeu-btn {
+            background: linear-gradient(145deg, #e8abab, #bfd3f1);
+            box-shadow: 5px 5px 10px #c5ccd7, -5px -5px 10px #fbf8f8;
+            transition: all 0.2s ease;
+        }
+        .skeu-btn:active {
+            box-shadow: inset 3px 3px 6px #cbcfd5, inset -3px -3px 6px #ffffff;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 min-h-screen flex items-center justify-center">
+
+    <div class="w-full max-w-5xl skeu-card p-6 sm:p-8 space-y-6">
+        <!-- Header Branding -->
+        <div class="flex flex-col sm:flex-row items-center justify-between border-b pb-4 border-gray-300 gap-4">
+            <div class="flex items-center gap-3">
+                <div class="text-4xl">🍏</div>
+                <div>
+                    <h1 class="text-2xl font-bold text-blue-600">Pro-Fit Clinical Sports Nutrition</h1>
+                    <p class="text-xs text-gray-500 font-medium">ADVANCED MEDICAL DIET & METABOLIC PRESCRIPTION SYSTEM</p>
+                </div>
+            </div>
+            <div class="flex flex-col items-end gap-2 w-full sm:w-auto">
+                <input type="text" id="coachName" value="MD. NADIM KHAN" class="skeu-inset px-4 py-2 text-sm font-bold text-blue-700 w-full sm:w-60 text-right outline-none">
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleHistoryModal()" class="skeu-btn px-3 py-1.5 rounded-xl text-xs font-bold text-blue-700 flex items-center gap-1.5">
+                        📁 Saved Clients History (<span id="clientCountBadge">0</span>)
+                    </button>
+                    <p class="text-[10px] text-gray-400 font-semibold">Sports Nutritionist (ISSA)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inputs Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Client Details -->
+            <div class="skeu-inset p-5">
+                <h2 class="text-xs font-bold text-gray-600 mb-3 uppercase tracking-wider">1. Client Profile Details</h2>
+                <div class="space-y-3">
+                    <input type="text" id="clientName" placeholder="Client Full Name (e.g. Alamin)" class="w-full skeu-card px-4 py-2.5 text-sm outline-none text-gray-700 font-medium">
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="number" id="clientAge" placeholder="Age" class="w-full skeu-card px-4 py-2.5 text-sm outline-none text-gray-700">
+                        <select id="clientSex" class="w-full skeu-card px-4 py-2.5 text-sm outline-none text-gray-700">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <!-- Custom Styled File Input -->
+                    <div class="flex items-center justify-between skeu-card px-4 py-2">
+                        <span class="text-xs text-gray-500 font-bold">Client Photo:</span>
+                        <label class="skeu-btn px-3 py-1.5 rounded-lg text-xs font-bold text-blue-600 cursor-pointer">
+                            Browse Image <input type="file" id="clientPhoto" accept="image/*" class="hidden" onchange="previewImage(event)">
+                        </label>
+                    </div>
+                    <p id="fileNameDisplay" class="text-[11px] text-gray-400 truncate pl-1">No file chosen</p>
+                </div>
+            </div>
+
+            <!-- Meal Plan Adder -->
+            <div class="skeu-inset p-5">
+                <h2 class="text-xs font-bold text-gray-600 mb-3 uppercase tracking-wider">2. Add Meal & Custom Items</h2>
+                <div class="space-y-3">
+                    <select id="mealTime" class="w-full skeu-card px-4 py-2.5 text-sm outline-none text-gray-700 font-semibold">
+                        <option value="Meal 1: Breakfast">Meal 1: Breakfast</option>
+                        <option value="Meal 2: Mid-Morning">Meal 2: Mid-Morning</option>
+                        <option value="Meal 3: Lunch">Meal 3: Lunch</option>
+                        <option value="Meal 4: Evening Snack">Meal 4: Evening Snack</option>
+                        <option value="Meal 5: Before Workout">Meal 5: Before Workout</option>
+                        <option value="Meal 6: After Workout">Meal 6: After Workout</option>
+                        <option value="Meal 7: Dinner">Meal 7: Dinner</option>
+                    </select>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" id="foodItemName" placeholder="Food (e.g. Lebu, Badam, Rice)" class="w-full skeu-card px-4 py-2.5 text-sm outline-none text-gray-700">
+                        <input type="number" id="foodQty" placeholder="Qty in grams/ml (e.g. 100)" value="100" class="w-full skeu-card px-4 py-2.5 text-sm outline-none text-gray-700">
+                    </div>
+                    <button onclick="addCustomMeal()" class="skeu-btn w-full py-2.5 text-sm font-bold text-blue-600 rounded-xl">➕ Add Food to Meal Plan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meal Plan Table -->
+        <div>
+            <h2 class="text-xs font-bold text-gray-600 mb-2 uppercase tracking-wider">3. Current Meal Plan Breakdown</h2>
+            <div class="skeu-inset p-4 max-h-52 overflow-y-auto">
+                <table class="w-full text-left text-sm text-gray-700">
+                    <thead>
+                        <tr class="border-b border-gray-300 text-[11px] text-gray-500 uppercase">
+                            <th class="pb-2">Meal Slot</th>
+                            <th class="pb-2">Food Name</th>
+                            <th class="pb-2">Qty</th>
+                            <th class="pb-2">Cal</th>
+                            <th class="pb-2">P</th>
+                            <th class="pb-2">C</th>
+                            <th class="pb-2">F</th>
+                            <th class="pb-2 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mealTableBody">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Total Summary Cards -->
+        <div class="grid grid-cols-4 gap-4 text-center">
+            <div class="skeu-inset p-3"><span class="text-[10px] text-gray-500 block uppercase font-bold">Total Calories</span><strong id="totCal" class="text-base text-blue-600">0</strong> kcal</div>
+            <div class="skeu-inset p-3"><span class="text-[10px] text-gray-500 block uppercase font-bold">Protein</span><strong id="totPro" class="text-base text-green-600">0</strong>g</div>
+            <div class="skeu-inset p-3"><span class="text-[10px] text-gray-500 block uppercase font-bold">Carbs</span><strong id="totCarb" class="text-base text-amber-600">0</strong>g</div>
+            <div class="skeu-inset p-3"><span class="text-[10px] text-gray-500 block uppercase font-bold">Fat</span><strong id="totFat" class="text-base text-rose-600">0</strong>g</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end gap-4">
+            <button onclick="printPrescription()" class="skeu-btn px-8 py-3 rounded-xl text-sm font-bold text-blue-700 bg-blue-100 shadow-md">🖨️ Download Skeuomorphic Medical PDF</button>
+        </div>
+    </div>
+
+    <!-- Saved Clients History Modal Pop-up -->
+    <div id="historyModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="w-full max-w-2xl skeu-card p-6 bg-[#cbdaf6] space-y-4 max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-gray-300 pb-3">
+                <h2 class="text-xs font-bold text-gray-700 uppercase tracking-wider">📁 Saved Clients History (Diet Charts Given)</h2>
+                <button onclick="toggleHistoryModal()" class="skeu-btn px-3 py-1 rounded-lg text-xs font-bold text-red-600">✕ Close</button>
+            </div>
+            <div class="skeu-inset p-4 overflow-y-auto flex-1">
+                <div id="savedClientsList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Dynamic Saved Client Cards -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mealList = [];
+        let clientImageBase64 = "";
+        let savedClients = JSON.parse(localStorage.getItem('profit_saved_clients')) || [];
+
+        window.onload = function() {
+            renderSavedClients();
+        };
+
+        function toggleHistoryModal() {
+            const modal = document.getElementById('historyModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('fileNameDisplay').innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    clientImageBase64 = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function calculateMacros(foodName, qty) {
+            const name = foodName.toLowerCase().trim();
+            let cal = 100, pro = 5, carb = 15, fat = 2;
+
+            if (name.includes('tea') || name.includes('cha') || name.includes('চা') || name.includes('green tea')) {
+                cal = 2; pro = 0; carb = 0.5; fat = 0;
+            } else if (name.includes('coffee') || name.includes('কফি') || name.includes('kofi')) {
+                cal = 2; pro = 0.1; carb = 0; fat = 0;
+            } else if (name.includes('sugar') || name.includes('chini') || name.includes('চিনি')) {
+                cal = 387; pro = 0; carb = 100; fat = 0;
+            } else if (name.includes('rice') || name.includes('bhat') || name.includes('ভাত') || name.includes('চাল')) {
+                cal = 130; pro = 2.7; carb = 28; fat = 0.3;
+            } else if (name.includes('chicken') || name.includes('murgi') || name.includes('মুরগি') || name.includes('মাংস')) {
+                cal = 165; pro = 31; carb = 0; fat = 3.6;
+            } else if (name.includes('egg') || name.includes('dim') || name.includes('ডিম')) {
+                cal = 155; pro = 13; carb = 1.1; fat = 11;
+            } else if (name.includes('potato') || name.includes('alu') || name.includes('আলু')) {
+                cal = 77; pro = 2; carb = 17; fat = 0.1;
+            } else if (name.includes('beef') || name.includes('goru') || name.includes('গরুর মাংস')) {
+                cal = 250; pro = 26; carb = 0; fat = 15;
+            } else if (name.includes('fish') || name.includes('mach') || name.includes('মাছ')) {
+                cal = 206; pro = 22; carb = 0; fat = 12;
+            } else if (name.includes('milk') || name.includes('dudh') || name.includes('দুধ')) {
+                cal = 50; pro = 3.4; carb = 5; fat = 2;
+            } else if (name.includes('oats') || name.includes('ওটস')) {
+                cal = 389; pro = 17; carb = 66; fat = 7;
+            } else if (name.includes('dal') || name.includes('lentil') || name.includes('ডাল')) {
+                cal = 116; pro = 9; carb = 20; fat = 0.4;
+            } else if (name.includes('bread') || name.includes('roti') || name.includes('রুটি') || name.includes('ruthi')) {
+                cal = 265; pro = 9; carb = 49; fat = 3.2;
+            } else if (name.includes('banana') || name.includes('kola') || name.includes('কলা')) {
+                cal = 89; pro = 1.1; carb = 23; fat = 0.3;
+            } else if (name.includes('vegetable') || name.includes('shobji') || name.includes('সবজি')) {
+                cal = 65; pro = 3; carb = 12; fat = 1;
+            } else if (name.includes('lebu') || name.includes('lemon') || name.includes('লেবু')) {
+                cal = 29; pro = 1.1; carb = 9.3; fat = 0.3;
+            } else if (name.includes('badam') || name.includes('nut') || name.includes('peanut') || name.includes('almond') || name.includes('কাজু') || name.includes('পেস্তা') || name.includes('বাদাম')) {
+                cal = 576; pro = 21; carb = 22; fat = 49;
+            } else if (name.includes('honey') || name.includes('madhu') || name.includes('মধু')) {
+                cal = 304; pro = 0.3; carb = 82; fat = 0;
+            } else if (name.includes('whey') || name.includes('protein')) {
+                cal = 400; pro = 80; carb = 8; fat = 4;
+            } else if (name.includes('dates') || name.includes('khajur') || name.includes('খেজুর')) {
+                cal = 282; pro = 2.5; carb = 75; fat = 0.4;
+            }
+
+            const mult = qty / 100;
+            return {
+                cal: Math.round(cal * mult),
+                pro: +(pro * mult).toFixed(1),
+                carb: +(carb * mult).toFixed(1),
+                fat: +(fat * mult).toFixed(1)
+            };
+        }
+
+        function addCustomMeal() {
+            const slot = document.getElementById('mealTime').value;
+            const foodName = document.getElementById('foodItemName').value.trim();
+            const qty = parseFloat(document.getElementById('foodQty').value) || 100;
+
+            if(!foodName) {
+                alert("Please enter a food item name!");
+                return;
+            }
+
+            const macros = calculateMacros(foodName, qty);
+
+            const item = {
+                id: Date.now(),
+                slot: slot,
+                name: foodName,
+                qty: qty,
+                ...macros
+            };
+
+            mealList.push(item);
+            document.getElementById('foodItemName').value = '';
+            renderMeals();
+        }
+
+        function deleteMeal(id) {
+            mealList = mealList.filter(m => m.id !== id);
+            renderMeals();
+        }
+
+        function renderMeals() {
+            const tbody = document.getElementById('mealTableBody');
+            tbody.innerHTML = '';
+            
+            let tCal = 0, tPro = 0, tCarb = 0, tFat = 0;
+
+            mealList.forEach(m => {
+                tCal += m.cal;
+                tPro += m.pro;
+                tCarb += m.carb;
+                tFat += m.fat;
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-200">
+                        <td class="py-2.5 font-semibold text-blue-600 text-xs">${m.slot}</td>
+                        <td class="py-2.5 font-medium">${m.name}</td>
+                        <td class="py-2.5">${m.qty}g</td>
+                        <td class="py-2.5">${m.cal}</td>
+                        <td class="py-2.5">${m.pro}g</td>
+                        <td class="py-2.5">${m.carb}g</td>
+                        <td class="py-2.5">${m.fat}g</td>
+                        <td class="py-2.5 text-right">
+                            <button onclick="deleteMeal(${m.id})" class="text-red-500 font-bold hover:text-red-700 bg-red-50 px-2 py-1 rounded-lg">🗑️ Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('totCal').innerText = tCal;
+            document.getElementById('totPro').innerText = tPro.toFixed(1);
+            document.getElementById('totCarb').innerText = tCarb.toFixed(1);
+            document.getElementById('totFat').innerText = tFat.toFixed(1);
+        }
+
+        function saveClientToHistory(clientData) {
+            const existingIndex = savedClients.findIndex(c => c.name.toLowerCase() === clientData.name.toLowerCase());
+            if (existingIndex >= 0) {
+                savedClients[existingIndex] = clientData;
+            } else {
+                savedClients.unshift(clientData);
+            }
+            localStorage.setItem('profit_saved_clients', JSON.stringify(savedClients));
+            renderSavedClients();
+        }
+
+        function deleteSavedClient(id) {
+            savedClients = savedClients.filter(c => c.id !== id);
+            localStorage.setItem('profit_saved_clients', JSON.stringify(savedClients));
+            renderSavedClients();
+        }
+
+        function renderSavedClients() {
+            const container = document.getElementById('savedClientsList');
+            const badge = document.getElementById('clientCountBadge');
+            badge.innerText = savedClients.length;
+
+            if (savedClients.length === 0) {
+                container.innerHTML = `<p class="text-xs text-gray-400 col-span-2 text-center py-4">No clients saved yet. Download a prescription to save client info automatically.</p>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            savedClients.forEach(client => {
+                container.innerHTML += `
+                    <div class="skeu-card p-3 flex items-center justify-between gap-3 bg-white">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-200 flex-shrink-0 border border-gray-300 flex items-center justify-center">
+                                ${client.image ? `<img src="${client.image}" class="w-full h-full object-cover">` : `<span class="text-[10px] text-gray-400 font-bold">No Img</span>`}
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-extrabold text-blue-700">${client.name}</h3>
+                                <p class="text-[10px] text-gray-500">${client.age} Yrs | ${client.sex} | <span class="text-emerald-600 font-bold">${client.totalCal} kcal</span></p>
+                                <p class="text-[9px] text-gray-400">Date: ${client.date}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button onclick="loadClient(${client.id})" title="Load Details" class="skeu-btn px-2.5 py-1 text-[11px] font-bold text-blue-600 rounded-lg">📥 Load</button>
+                            <button onclick="deleteSavedClient(${client.id})" title="Delete Client" class="text-red-500 hover:text-red-700 bg-red-50 p-1.5 rounded-lg text-xs">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function loadClient(id) {
+            const client = savedClients.find(c => c.id === id);
+            if(client) {
+                document.getElementById('clientName').value = client.name;
+                document.getElementById('clientAge').value = client.age;
+                document.getElementById('clientSex').value = client.sex;
+                if(client.image) {
+                    clientImageBase64 = client.image;
+                    document.getElementById('fileNameDisplay').innerText = "Loaded from History";
+                }
+                mealList = client.meals || [];
+                renderMeals();
+                toggleHistoryModal();
+                alert(`Loaded profile for ${client.name} successfully!`);
+            }
+        }
+
+        function printPrescription() {
+            const name = document.getElementById('clientName').value.trim();
+            if(!name) {
+                alert("Please enter client name!");
+                return;
+            }
+
+            const age = document.getElementById('clientAge').value || 'N/A';
+            const sex = document.getElementById('clientSex').value;
+            const currentDate = new Date().toLocaleDateString();
+            const coachName = document.getElementById('coachName').value;
+            const totCal = document.getElementById('totCal').innerText;
+            const totPro = document.getElementById('totPro').innerText;
+            const totCarb = document.getElementById('totCarb').innerText;
+            const totFat = document.getElementById('totFat').innerText;
+
+            const clientRecord = {
+                id: Date.now(),
+                name: name,
+                age: age,
+                sex: sex,
+                image: clientImageBase64,
+                date: currentDate,
+                totalCal: totCal,
+                meals: [...mealList]
+            };
+            saveClientToHistory(clientRecord);
+
+            const groupedMeals = {};
+            mealList.forEach(m => {
+                if(!groupedMeals[m.slot]) groupedMeals[m.slot] = [];
+                groupedMeals[m.slot].push(m);
+            });
+
+            let rowsHTML = '';
+            for (const [slot, items] of Object.entries(groupedMeals)) {
+                items.forEach((m, index) => {
+                    if(index === 0) {
+                        rowsHTML += `
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 7px; font-weight: 700; color: #1e40af; vertical-align: top; background: #f8fafc;" rowspan="${items.length}">${slot}</td>
+                                <td style="padding: 7px; font-weight: 500; color: #334155;">${m.name}</td>
+                                <td style="padding: 7px; color: #475569;">${m.qty}g</td>
+                                <td style="padding: 7px; font-weight: 600; color: #0284c7;">${m.cal} kcal</td>
+                                <td style="padding: 7px; color: #16a34a;">${m.pro}g</td>
+                                <td style="padding: 7px; color: #d97706;">${m.carb}g</td>
+                                <td style="padding: 7px; color: #e11d48;">${m.fat}g</td>
+                            </tr>
+                        `;
+                    } else {
+                        rowsHTML += `
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 7px; font-weight: 500; color: #334155;">${m.name}</td>
+                                <td style="padding: 7px; color: #475569;">${m.qty}g</td>
+                                <td style="padding: 7px; font-weight: 600; color: #0284c7;">${m.cal} kcal</td>
+                                <td style="padding: 7px; color: #16a34a;">${m.pro}g</td>
+                                <td style="padding: 7px; color: #d97706;">${m.carb}g</td>
+                                <td style="padding: 7px; color: #e11d48;">${m.fat}g</td>
+                            </tr>
+                        `;
+                    }
+                });
+            }
+
+            // Fixed container with overflow hidden so html2canvas renders it properly without being blank
+            const printContainer = document.createElement('div');
+            printContainer.style.position = 'fixed';
+            printContainer.style.top = '0';
+            printContainer.style.left = '0';
+            printContainer.style.width = '0';
+            printContainer.style.height = '0';
+            printContainer.style.overflow = 'hidden';
+            printContainer.style.zIndex = '99999';
+
+            const innerContent = document.createElement('div');
+            innerContent.style.width = '210mm';
+            innerContent.style.minHeight = '297mm';
+            innerContent.style.background = '#eef2f7';
+            innerContent.style.color = '#1e293b';
+            innerContent.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+            innerContent.style.boxSizing = 'border-box';
+            innerContent.style.padding = '10mm';
+
+            innerContent.innerHTML = `
+                <div style="background: #ffffff; border-radius: 16px; border: 1px solid #cbd5e1; padding: 10mm; display: flex; flex-direction: column; justify-content: space-between; height: 265mm; box-sizing: border-box;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-bottom: 12px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="width: 40px; height: 40px; background: #e0f2fe; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid #bae6fd;">🍏</div>
+                                <div>
+                                    <h2 style="font-size: 15px; font-weight: 800; color: #1e40af; margin: 0; letter-spacing: 0.5px;">${coachName}</h2>
+                                    <p style="font-size: 8.5px; font-weight: 700; color: #059669; margin: 2px 0 0 0;">CERTIFIED SPORTS NUTRITIONIST & CLINICAL COACH</p>
+                                    <p style="font-size: 7.5px; color: #64748b; margin: 1px 0 0 0;">ISSA Master Trainer | Advanced Dietetics & Metabolic Conditioning</p>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="text-align: right;">
+                                    <p style="font-size: 7.5px; color: #94a3b8; font-weight: 700; text-transform: uppercase; margin: 0;">Patient Profile</p>
+                                    <p style="font-size: 9.5px; color: #334155; margin: 2px 0 0 0; font-weight: 700;">ID: #PRF-2026</p>
+                                </div>
+                                <div style="width: 40px; height: 40px; border-radius: 12px; overflow: hidden; border: 2px solid #3b82f6; background: #f1f5f9; display: flex; align-items: center; justify-content: center;">
+                                    ${clientImageBase64 ? `<img src="${clientImageBase64}" style="width: 100%; height: 100%; object-fit: cover;">` : `<span style="font-size: 8px; color: #94a3b8; font-weight: 700;">Photo</span>`}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <p style="font-size: 11px; margin: 0 0 4px 0; color: #334155;"><strong>PATIENT NAME:</strong> <span style="font-weight: 700; color: #0f172a; border-bottom: 1px dotted #94a3b8; padding-bottom: 1px;">${name}</span></p>
+                                <p style="font-size: 11px; margin: 0; color: #334155;"><strong>AGE / SEX:</strong> <span style="font-weight: 600; color: #475569;">${age} Years / ${sex}</span></p>
+                            </div>
+                            <div style="text-align: right;">
+                                <p style="font-size: 11px; margin: 0 0 4px 0; color: #334155;"><strong>DATE:</strong> <span style="font-weight: 600; color: #475569;">${currentDate}</span></p>
+                                <div style="text-align: right; color: #2563eb; font-weight: 900; font-size: 20px; letter-spacing: -1px;">Rx.</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 12px;">
+                            <h3 style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; color: #1e40af; letter-spacing: 0.5px; margin: 0 0 8px 0; border-bottom: 1px solid #bfdbfe; padding-bottom: 4px;">Prescribed Nutritional Plan & Meal Breakdown</h3>
+                            <table style="width: 100%; text-align: left; font-size: 10px; border-collapse: collapse; margin-bottom: 10px; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
+                                <thead>
+                                    <tr style="background: #dbeafe; color: #1e3a8a; font-weight: 700;">
+                                        <th style="padding: 7px; width: 25%;">Meal Timing</th>
+                                        <th style="padding: 7px;">Food Item</th>
+                                        <th style="padding: 7px;">Quantity</th>
+                                        <th style="padding: 7px;">Calories</th>
+                                        <th style="padding: 7px;">Protein</th>
+                                        <th style="padding: 7px;">Carbs</th>
+                                        <th style="padding: 7px;">Fat</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${rowsHTML}
+                                </tbody>
+                            </table>
+                            
+                            <div style="padding: 10px 14px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px;">
+                                <p style="font-weight: 700; color: #065f46; text-transform: uppercase; font-size: 9px; margin: 0 0 3px 0;">Daily Macro Summary Target:</p>
+                                <p style="color: #334155; font-size: 10.5px; margin: 0;">🔥 Total Calories: <strong style="color: #2563eb;">${totCal}</strong> kcal &nbsp;|&nbsp; 🥩 Protein: <strong style="color: #059669;">${totPro}</strong>g &nbsp;|&nbsp; 🍞 Carbs: <strong style="color: #d97706;">${totCarb}</strong>g &nbsp;|&nbsp; 🥑 Fat: <strong style="color: #e11d48;">${totFat}</strong>g</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid #cbd5e1; padding-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 9px; color: #64748b;">
+                        <div>
+                            <p style="font-weight: 700; color: #1e40af; margin: 0 0 2px 0;">PRO-FIT CLINICAL METABOLIC CENTER</p>
+                            <p style="margin: 0 0 1px 0;">📞 +880 1850085185 | Email: nadimhasan83292@gmail.com</p>
+                            <p style="margin: 0;">📍 Middle Badda, Dhaka, Bangladesh</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="font-weight: 600; color: #334155; margin: 0 0 1px 0;">Consultation Hours: Sat - Thu</p>
+                            <p style="margin: 0;">10:00 AM - 08:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            printContainer.appendChild(innerContent);
+            document.body.appendChild(printContainer);
+
+            setTimeout(() => {
+                const opt = {
+                    margin:       0,
+                    filename:     `diet-prescription-${name.toLowerCase().replace(/\s+/g, '-')}.pdf`,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, logging: false },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                html2pdf().from(innerContent).set(opt).save().then(() => {
+                    document.body.removeChild(printContainer);
+                });
+            }, 300);
+        }
+    </script>
+</body>
+</html>
